@@ -1,8 +1,12 @@
 
 
+
 <script setup>
 import { ref } from 'vue'
 import { obtenerToken } from '../services/api.js'
+
+// Evento para avisar a App.vue que la sesión inició
+const emit = defineEmits(['sesion-iniciada'])
 
 const correo = ref('')
 const licencia = ref('')
@@ -26,6 +30,9 @@ async function iniciarSesion() {
 
     mensaje.value = 'Sesión iniciada. Token guardado.'
 
+    // Avisar a App.vue que la sesión inició
+    emit('sesion-iniciada', respuesta.token)
+
   } catch (error) {
     console.error('Error al iniciar sesión:', error)
     mensaje.value = 'Error: ' + error.message
@@ -33,12 +40,6 @@ async function iniciarSesion() {
   } finally {
     cargando.value = false
   }
-}
-
-// Función para cerrar sesión
-function cerrarSesion() {
-  localStorage.removeItem('token')
-  mensaje.value = 'Sesión cerrada.'
 }
 </script>
 
@@ -56,10 +57,6 @@ function cerrarSesion() {
       {{ cargando ? 'Conectando...' : 'Obtener token' }}
     </button>
   </form>
-
-  <button @click="cerrarSesion">
-    Cerrar sesión
-  </button>
 
   <p>{{ mensaje }}</p>
 </template>
